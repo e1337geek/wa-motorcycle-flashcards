@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WA Motorcycle Permit Flashcards</title>
+<style>
+  :root {
+    --bg-page: #faf9f7;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f1efe8;
+    --bg-success: #e1f5ee;
+    --bg-warning: #faeeda;
+    --bg-danger: #fcebeb;
+    --bg-info: #e6f1fb;
+    --text-primary: #2c2c2a;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #888780;
+    --text-success: #0f6e56;
+    --text-warning: #854f0b;
+    --text-danger: #a32d2d;
+    --text-info: #185fa5;
+    --border-tertiary: rgba(0, 0, 0, 0.10);
+    --border-secondary: rgba(0, 0, 0, 0.20);
+    --border-success: rgba(15, 110, 86, 0.35);
+    --border-danger: rgba(163, 45, 45, 0.35);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-focus: 0 0 0 2px rgba(24, 95, 165, 0.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-page: #1a1a18;
+      --bg-primary: #25252310;
+      --bg-secondary: #2c2c2a;
+      --bg-success: #04342c;
+      --bg-warning: #412402;
+      --bg-danger: #501313;
+      --bg-info: #042c53;
+      --text-primary: #f1efe8;
+      --text-secondary: #b4b2a9;
+      --text-tertiary: #888780;
+      --text-success: #5dcaa5;
+      --text-warning: #ef9f27;
+      --text-danger: #f09595;
+      --text-info: #85b7eb;
+      --border-tertiary: rgba(255, 255, 255, 0.12);
+      --border-secondary: rgba(255, 255, 255, 0.22);
+      --border-success: rgba(93, 202, 165, 0.40);
+      --border-danger: rgba(240, 149, 149, 0.40);
+    }
+    body { background: var(--bg-page); }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+  header {
+    margin-bottom: 24px;
+  }
+  header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    color: var(--text-primary);
+  }
+  header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  .progress-wrap {
+    margin-bottom: 24px;
+  }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .progress-phase {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .progress-count {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-bar > div { height: 100%; }
+  .progress-note {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+  .card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+    padding: 20px 24px 24px;
+  }
+  .card-status {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 14px;
+    min-height: 22px;
+  }
+  .streak-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  .streak-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .pill {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: var(--radius-md);
+    background: var(--bg-info);
+    color: var(--text-info);
+    font-weight: 500;
+  }
+  .question {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    text-align: left;
+    padding: 14px 16px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 15px;
+    line-height: 1.45;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    min-height: 48px;
+  }
+  .option:not(:disabled):hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-secondary);
+  }
+  .option:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+  .option:disabled { cursor: default; }
+  .option.correct {
+    background: var(--bg-success);
+    border-color: var(--border-success);
+    color: var(--text-success);
+  }
+  .option.wrong {
+    background: var(--bg-danger);
+    border-color: var(--border-danger);
+    color: var(--text-danger);
+  }
+  .option.dim {
+    color: var(--text-tertiary);
+    opacity: 0.8;
+  }
+  .option-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .option.correct .option-badge {
+    background: var(--text-success);
+    color: var(--bg-success);
+  }
+  .option.wrong .option-badge {
+    background: var(--text-danger);
+    color: var(--bg-danger);
+  }
+  .option-text { flex: 1; padding-top: 2px; }
+  .option-badge svg { width: 14px; height: 14px; }
+  .result-row {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .result-msg {
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .result-msg.success { color: var(--text-success); }
+  .result-msg.warning { color: var(--text-warning); }
+  .result-msg svg { width: 16px; height: 16px; }
+  button.btn {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-secondary);
+    color: var(--text-primary);
+    padding: 9px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    transition: background 0.15s;
+  }
+  button.btn:hover {
+    background: var(--bg-secondary);
+  }
+  button.btn:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+  }
+  button.btn:active { transform: scale(0.98); }
+  button.btn svg { width: 16px; height: 16px; }
+  button.btn.primary {
+    min-width: 130px;
+    justify-content: center;
+  }
+  .done {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+  }
+  .done-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-success);
+    color: var(--text-success);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .done-icon svg { width: 28px; height: 28px; }
+  .done-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .done-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+  footer button {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    padding: 4px 8px;
+  }
+  footer button:hover { color: var(--text-secondary); }
+  @media (max-width: 480px) {
+    .page { padding: 16px 12px 32px; }
+    .card { padding: 16px 16px 20px; }
+    .question { font-size: 16px; }
+    .option { font-size: 14px; padding: 12px 14px; }
+    header h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>WA motorcycle permit flashcards</h1>
+    <p>Answer each card correctly twice in a row to master it. Final review pass follows.</p>
+  </header>
+  <h2 class="sr-only">Multiple choice flashcards for the Washington motorcycle permit exam</h2>
+  <div id="app"></div>
+  <footer>
+    <span id="storage-status">Progress saves automatically.</span>
+    &nbsp;·&nbsp;
+    <button id="reset-btn" type="button">Reset all progress</button>
+  </footer>
+</div>
+
+<script>
+(function() {
+  // ---------- Question bank ----------
+  const CARDS = [
+    { q: "What is the minimum age to obtain a motorcycle instruction permit in Washington?", correct: "16 years old, with a current Washington driver license", distractors: ["15 years old, with parental consent", "17 years old", "18 years old"] },
+    { q: "How long is a motorcycle instruction permit valid in Washington?", correct: "180 days", distractors: ["90 days", "1 year", "60 days"] },
+    { q: "How many motorcycle instruction permits can you get within a 5-year period?", correct: "Two", distractors: ["One", "Three", "Unlimited, as long as you renew before expiration"] },
+    { q: "What restrictions apply to riders with an instruction permit?", correct: "No carrying passengers and no riding at night", distractors: ["No freeway riding and no carrying passengers", "Must wear a high-visibility vest at all times", "Cannot ride more than 25 miles from home"] },
+    { q: "What is the current minimum fine for riding without a motorcycle endorsement in Washington?", correct: "$389", distractors: ["$124", "$250", "$500"] },
+    { q: "What kind of helmet is legally required to ride a motorcycle in Washington?", correct: "A DOT-compliant helmet", distractors: ["Any helmet that covers the top of your head", "A Snell-certified helmet", "A full-face helmet only"] },
+    { q: "How is DOT compliance indicated on a motorcycle helmet?", correct: "A 'DOT' label on the rear exterior and the interior of the helmet", distractors: ["A hologram on the visor", "A serial number stamped under the chin strap", "The manufacturer's word in the owner's manual"] },
+    { q: "Roughly how often do most manufacturers recommend replacing a helmet?", correct: "Every 5 years, due to breakdown of protective materials", distractors: ["Every 2 years", "Every 10 years", "Only when visibly damaged"] },
+    { q: "What is the most common cause of rider death in motorcycle crashes?", correct: "Head injury", distractors: ["Internal bleeding", "Spinal injury", "Loss of blood from limb injuries"] },
+    { q: "Which type of helmet provides the best crash protection?", correct: "Full-face", distractors: ["Modular / flip-up", "Three-quarter shell", "Half shell"] },
+    { q: "Are eyeglasses or sunglasses sufficient eye protection while riding?", correct: "No, most are not shatter-resistant and may come off at speed", distractors: ["Yes, as long as they fit snugly", "Yes, but only sunglasses with polarized lenses", "Only if they have side shields"] },
+    { q: "When should you NOT wear tinted eye protection?", correct: "At dusk, in fog, or in rain — any low-visibility condition", distractors: ["On overcast days", "In direct sunlight", "At highway speeds"] },
+    { q: "Are ear buds (in-ear speakers) legal for motorcyclists in Washington?", correct: "No — ear buds are illegal, but ear plugs are legal", distractors: ["Yes, both ear buds and ear plugs are legal", "Yes, but only in one ear", "No, all in-ear devices including ear plugs are illegal"] },
+    { q: "Which material does NOT provide significant abrasion protection in a crash?", correct: "Denim", distractors: ["Leather", "Heavy textile riding gear", "Kevlar-lined fabric"] },
+    { q: "What does the 'T' in the T-OLLSS pre-ride inspection acronym stand for?", correct: "Tires and wheels", distractors: ["Throttle", "Transmission", "Turn signals"] },
+    { q: "What does the second 'S' in T-OLLSS stand for?", correct: "Stands (kickstand and center stand)", distractors: ["Steering head bearings", "Switches", "Seat and seat hardware"] },
+    { q: "Which equipment is required for a motorcycle to be street-legal in Washington?", correct: "Mirrors, muffler, horn, license plate, headlight, taillight, and turn signals", distractors: ["Just headlight, taillight, and license plate", "Headlight, taillight, license plate, and at least one mirror", "Headlight, taillight, license plate, horn, and muffler"] },
+    { q: "How do two-wheeled motorcycles steer at speeds above approximately 12-15 mph?", correct: "Countersteering — press the handgrip in the direction you want to go", distractors: ["Direct steering — turn the handlebars in the direction you want to go", "Body lean alone, without using the handlebars", "A combination of leaning and rear brake pressure"] },
+    { q: "To turn a two-wheeled motorcycle to the LEFT at 30 mph, you should:", correct: "Press forward on the LEFT handgrip", distractors: ["Press forward on the RIGHT handgrip", "Pull back on the LEFT handgrip", "Lean your body left without touching the handgrips"] },
+    { q: "How do three-wheeled motorcycles steer under normal conditions?", correct: "Direct steering — turn the handlebars in the direction you want to go", distractors: ["Countersteering, just like two-wheelers", "Body weight shift only", "A combination of countersteering and rear brake"] },
+    { q: "What are the four steps of the cornering technique for two-wheelers?", correct: "Slow, look, press, roll", distractors: ["Lean, brake, accelerate, exit", "Scan, signal, steer, straighten", "Reduce, brake, countersteer, exit"] },
+    { q: "Which two errors most commonly cause single-vehicle motorcycle fatalities in corners?", correct: "Excessive speed and improper technique", distractors: ["Worn tires and loose gravel", "Mechanical failure and bad weather", "Distraction and fatigue"] },
+    { q: "Which brake provides more stopping power on a two-wheeled motorcycle?", correct: "The front brake — weight transfers forward when braking", distractors: ["The rear brake — it has more contact patch", "Both equally", "The engine brake (downshift)"] },
+    { q: "What is the safest way to brake for the shortest stop on a two-wheeler?", correct: "Use both front and rear brakes smoothly and progressively", distractors: ["Use only the front brake — it does all the work", "Use only the rear brake — the front can flip you", "Apply the rear brake first, then the front after weight has transferred"] },
+    { q: "After coming to a stop on a two-wheeler, what gear should you stay in and why?", correct: "1st gear, in case you need to move quickly to avoid a rear-end collision", distractors: ["Neutral, to rest the clutch hand", "2nd gear, for a smoother takeoff", "Whatever gear you happened to stop in"] },
+    { q: "When you must brake while leaned over in a corner, the best technique is to:", correct: "Reduce lean angle as you brake — straighten first if road and traffic allow", distractors: ["Apply both brakes hard immediately", "Use only the rear brake to avoid losing the front", "Lean further to keep the bike under control"] },
+    { q: "What is the correct rule for combining swerving and braking?", correct: "Never swerve and brake at the same time — do one, then the other", distractors: ["Brake and swerve simultaneously for the fastest avoidance", "Always brake first, regardless of available space", "Always swerve first, regardless of traffic behind you"] },
+    { q: "What is a 'swerve' on a two-wheeled motorcycle?", correct: "One countersteer to avoid the hazard, followed by a second countersteer to return to your path", distractors: ["Locking the rear brake to slide around the hazard", "A hard lean using only body weight, no handlebar input", "A sharp turn of the handlebars in the direction you want to go"] },
+    { q: "What is a 'tip-over line' on a three-wheeled motorcycle?", correct: "An imaginary line between any two wheels — if weight shifts outside it, a wheel can lift", distractors: ["The angle at which the bike will fall over from a stop", "The maximum lean angle before the frame contacts the ground", "The center line of the rig running front to back"] },
+    { q: "What is 'yaw' on a sidecar rig?", correct: "A sideways pull caused by the sidecar's weight during acceleration or braking", distractors: ["The bike's tendency to wobble at high speeds", "The vertical bouncing motion when crossing rough pavement", "A skidding rear tire under hard braking"] },
+    { q: "When ACCELERATING from a stop on a sidecar rig, the rig pulls right. To compensate, you should:", correct: "Steer slightly LEFT", distractors: ["Steer slightly RIGHT to follow the pull", "Apply the rear brake briefly", "Lean your body to the right"] },
+    { q: "When BRAKING on a sidecar rig, thrust pulls the rig left. To compensate, you should:", correct: "Steer slightly RIGHT", distractors: ["Steer slightly LEFT to follow the pull", "Release the front brake immediately", "Lean your body to the left"] },
+    { q: "On a sidecar rig (sidecar on the right), which turn direction is more likely to lift the sidecar wheel?", correct: "Right turns — centrifugal force pulls the rig away from the sidecar", distractors: ["Left turns", "Both equally", "Neither — sidecar rigs can't lift a wheel"] },
+    { q: "What is the recommended minimum following distance for a motorcycle in ideal conditions?", correct: "3 seconds", distractors: ["1 second", "2 seconds", "5 seconds"] },
+    { q: "How far ahead down the road should you be looking?", correct: "At least 12 seconds ahead", distractors: ["At least 4 seconds ahead", "At least 30 seconds ahead", "Only as far as the next intersection"] },
+    { q: "The three components of total stopping distance are:", correct: "Perception, reaction, and execution (braking)", distractors: ["Vision, decision, and braking", "Recognition, response, and recovery", "Sight, throttle, and brake"] },
+    { q: "What is the most common type of motorcycle vs. car collision?", correct: "A car turning left across the path of the motorcycle at an intersection", distractors: ["A car rear-ending a motorcycle at a red light", "A car drifting into the motorcycle's lane on the highway", "A motorcycle rear-ending a car"] },
+    { q: "If you're being tailgated, what's the best response?", correct: "Gradually slow down to create more space ahead of you", distractors: ["Speed up to put distance between you and the tailgater", "Move to the shoulder and let them pass", "Brake hard to discourage the behavior"] },
+    { q: "What is the legal BAC limit for an adult (21+) motorcycle rider in Washington?", correct: "0.08%", distractors: ["0.05%", "0.10%", "0.02%"] },
+    { q: "What is the BAC limit for a motorcycle rider under 21 in Washington?", correct: "0.02%", distractors: ["0.00% (zero tolerance)", "0.05%", "0.08% (same as adults)"] },
+    { q: "What is the THC blood concentration limit for an impaired motorcyclist (21+) in Washington?", correct: "5 nanograms", distractors: ["1 nanogram", "10 nanograms", "There is no specific limit for THC"] },
+    { q: "Approximately how long does it take for one alcoholic drink to leave your system?", correct: "About 1 hour per drink", distractors: ["About 30 minutes per drink", "About 2 hours per drink", "It depends entirely on what you eat afterward"] },
+    { q: "Which method actually removes alcohol from your body?", correct: "Time — nothing else works", distractors: ["Drinking lots of water", "Coffee or other caffeine", "A cold shower"] },
+    { q: "One standard drink equals 1.5 oz of hard liquor or:", correct: "12 oz of beer or 5 oz of wine", distractors: ["16 oz of beer or 8 oz of wine", "8 oz of beer or 3 oz of wine", "12 oz of beer or 8 oz of wine"] },
+    { q: "What is the minimum age for a passenger on a motorcycle in Washington?", correct: "5 years old", distractors: ["8 years old", "12 years old", "There is no minimum age"] },
+    { q: "A motorcycle passenger in Washington is required to have:", correct: "A passenger seat, footrests/pegs, and a DOT-compliant helmet", distractors: ["Any helmet of their choice and a passenger seat", "A passenger seat, eye protection, and to be at least 8 years old", "A Washington driver license and a DOT-compliant helmet"] },
+    { q: "The proper order for a passenger to mount and dismount is:", correct: "Mount AFTER the rider; dismount BEFORE the rider", distractors: ["Mount BEFORE the rider; dismount AFTER the rider", "Both should mount and dismount at the same time", "Order doesn't matter as long as the bike is on its center stand"] },
+    { q: "Where should a single passenger be positioned on a sidecar rig, and why?", correct: "In the sidecar — it keeps weight inside the tip-over lines", distractors: ["On the rear seat of the motorcycle", "Wherever they prefer", "On the rear seat for short trips, in the sidecar for long trips"] },
+    { q: "What's the standard formation for two-wheeled motorcycles riding in a group?", correct: "Staggered formation", distractors: ["Single file at all times", "Side by side in pairs", "Tight diamond formation"] },
+    { q: "When should a group of motorcycles switch from staggered to single file?", correct: "In curves, in areas of limited visibility, or anywhere more space is needed", distractors: ["Whenever there's traffic behind the group", "Only on highways", "Single file is never necessary in a skilled group"] },
+    { q: "Is lane splitting (riding between lanes of traffic) legal in Washington?", correct: "No — both lane splitting and shoulder riding are illegal", distractors: ["Yes, at any speed", "Yes, but only at speeds under 10 mph", "Yes, but only when traffic is fully stopped"] },
+    { q: "Are motorcycles allowed in Washington's HOV (diamond) lanes?", correct: "Yes, at any time", distractors: ["Only with a passenger", "Only during peak hours", "No — motorcycles are excluded from HOV lanes"] },
+    { q: "At what angle should you cross obstacles like railroad tracks?", correct: "As close to a 90-degree angle as possible", distractors: ["Approximately 45 degrees", "At any angle, as long as you go slowly", "Parallel to the tracks if possible"] },
+    { q: "What is target fixation?", correct: "Staring at an object so intently that you steer toward it instead of away", distractors: ["Locking your gaze on the road ahead for better focus", "The feeling of speed when riding fast", "A meditation technique used by experienced riders"] },
+    { q: "To compensate for the increased risk of riding at night, you should:", correct: "Reduce speed, increase following distance, and use other vehicles' lights", distractors: ["Use high beams at all times, including around oncoming traffic", "Ride faster to spend less time on the road", "Wear darker clothing to reduce headlight glare"] },
+    { q: "When are deer and other wildlife typically most active?", correct: "Between dusk and dawn", distractors: ["During mid-day heat", "Only on cloudy days", "Right after sunrise"] },
+    { q: "Why is the first rainfall of the season especially dangerous?", correct: "Roads become extra slippery as accumulated oil and grime mix with water", distractors: ["Drivers forget how to use windshield wipers", "Tires need to be replaced after long dry spells", "Painted lane lines become temporarily invisible"] },
+    { q: "When changing lanes on a motorcycle, you should always:", correct: "Check over your shoulder for vehicles in your blind spot", distractors: ["Rely on your mirrors alone — looking away is dangerous", "Tap your horn to alert nearby drivers", "Decelerate first, then change lanes"] },
+    { q: "What is the main disadvantage of engine braking (downshifting to slow down)?", correct: "It doesn't activate your brake light, so drivers behind you don't know you're slowing", distractors: ["It wears out the clutch much faster", "It can stall the engine without warning", "It only works at highway speeds"] },
+    { q: "How should you compensate for engine braking's lack of brake light?", correct: "Flash your brake light a few times to signal that you're slowing", distractors: ["Hold up a hand signal", "Always use the brakes instead of engine braking", "Turn on your hazard lights"] },
+    { q: "At intersections, you should:", correct: "Stay in 1st gear, check mirrors often, and 'cover' your controls", distractors: ["Shift to neutral and rest your hands", "Stay in 2nd gear for a smoother launch", "Apply the parking brake if equipped"] },
+    { q: "What does it mean to 'cover' your controls?", correct: "Have your fingers and feet ready to operate the clutch, brakes, and throttle quickly", distractors: ["Cover them with a cloth at stops to prevent rain damage", "Lock the controls so they can't be tampered with", "Cushion them with foam to reduce vibration"] },
+    { q: "Where should your knees be while riding a two-wheeler?", correct: "Against the gas tank, to help with balance and control", distractors: ["Spread wide for better airflow and visibility", "Pulled up close to the seat", "Resting on the engine guards if equipped"] },
+    { q: "What is the correct arm position for steering a motorcycle effectively?", correct: "Arms slightly bent — sit forward enough that you don't have to stretch", distractors: ["Arms fully straight — locked at the elbows for stability", "Arms tightly bent and close to your body for control", "Arm position doesn't matter — only grip strength does"] },
+    { q: "During an emergency quick stop, where should your knees and eyes be?", correct: "Knees against the tank, eyes UP and looking well ahead", distractors: ["Knees apart for balance, eyes on the front wheel", "Knees against the tank, eyes on the brake lever", "Knees apart, eyes on the road just in front of the bike"] },
+    { q: "On a three-wheeler, the shortest, safest stop comes from:", correct: "Applying ALL brakes simultaneously, smoothly and progressively", distractors: ["Using only the front brake — rear brakes can lock the rig", "Using only the rear brakes — the front can flip the rig", "Engaging engine braking first, then applying brakes"] },
+    { q: "Riding UPHILL on a three-wheeler causes weight to shift:", correct: "Toward the rear, making the front lighter and reducing front-tire grip", distractors: ["Toward the front, increasing front-tire grip", "Equally — three-wheelers don't shift weight on hills", "Toward the side opposite the sidecar (on sidecar rigs only)"] },
+    { q: "When riding DOWNHILL, you should begin slowing:", correct: "Earlier and more smoothly, since weight shifts forward and the front tire can slide", distractors: ["Later and harder — gravity helps the brakes work", "Only with engine braking", "Only with the rear brake to prevent flipping"] },
+    { q: "What is 'drifting' on a three-wheeler?", correct: "A controlled technique using throttle, steering, and braking to slightly slide the rear toward the corner's outside", distractors: ["Letting the bike coast in neutral around a curve", "Sliding sideways at high speed for show", "Allowing the front wheel to wash out before correcting"] },
+    { q: "Why should you avoid swerving on a three-wheeler when possible?", correct: "Sudden side loads can upset the suspension and cause a tip- or rollover", distractors: ["Three-wheelers physically can't swerve", "Swerving wears out the tires unevenly", "It's illegal to swerve on a three-wheeler in Washington"] },
+    { q: "How can you increase your visibility to other drivers?", correct: "Wear brightly-colored or reflective gear and use your headlight", distractors: ["Ride closer to the centerline so cars notice you sooner", "Honk your horn periodically", "Ride only in the right lane"] },
+    { q: "According to the manual, what's the most common comment from drivers after colliding with a motorcyclist?", correct: "'I didn't see you' / 'I didn't see the motorcycle'", distractors: ["'You came out of nowhere'", "'You were going too fast'", "'I thought you saw me coming'"] },
+    { q: "The three lane positions a motorcycle can use within a single lane are:", correct: "Outside, middle, and inside", distractors: ["Left, center, and right", "High, middle, and low", "Left and right of center — only two positions"] },
+    { q: "Which cornering line is generally safest for less experienced riders?", correct: "Middle / middle / middle — it avoids both oncoming traffic and edge debris", distractors: ["Outside / inside / outside — it gives the best view", "Inside / outside / inside — it keeps you away from the centerline", "Delayed apex — it sets you up for the next corner"] },
+    { q: "Penalties for a DUI conviction in Washington can include:", correct: "License suspension, fines, community service, and various costs (lawyer fees, IID, etc.)", distractors: ["Only a fine", "Only license suspension", "Only mandatory rehab — no fines or suspension"] },
+    { q: "Hypothermia (dangerously low body temperature) while riding can cause:", correct: "Loss of physical AND mental function, affecting your ability to ride safely", distractors: ["Only physical shivering, with no impact on judgment", "Only sleepiness, easily countered with caffeine", "No real danger as long as you stay on your bike"] },
+    { q: "Riders under 18 in Washington must:", correct: "Complete an approved safety course AND have parental permission before applying for an endorsement", distractors: ["Wait until they turn 18 — no permits issued under 18", "Take a safety course only — no parental permission needed", "Have parental permission only — no safety course required"] },
+    { q: "Why does Washington require SEPARATE endorsements for two- and three-wheeled motorcycles?", correct: "Their handling characteristics are significantly different", distractors: ["To collect more endorsement fees", "Three-wheelers are heavier and need a commercial license", "There is no real reason — it's an administrative legacy"] },
+    { q: "To 'square your handlebars' before stopping means to:", correct: "Straighten the front wheel for stability and control at the stop", distractors: ["Center your body weight equally over both pegs", "Apply both brakes evenly", "Look straight ahead instead of down at the road"] },
+    { q: "When carrying cargo on your motorcycle, you should:", correct: "Place it as low and centered as possible, strapped down tightly", distractors: ["Place it high and to one side for easy access", "Place it on the gas tank for the best weight distribution", "Place it on a rear rack only — never in saddlebags"] },
+    { q: "On a sidecar rig, what happens during a LEFT turn that can be dangerous in extreme cases?", correct: "Weight shifts onto the sidecar wheel and the sidecar nose can dig in, potentially flipping the rig", distractors: ["The sidecar wheel always lifts immediately", "The motorcycle wheel always lifts immediately", "Nothing — left turns on a sidecar are completely uneventful"] },
+    { q: "Body armor in motorcycle riding gear should be located in which areas?", correct: "Knees, elbows, shoulders, hips, and back", distractors: ["Chest, stomach, and forearms", "Head, neck, and chest only", "Feet, ankles, and wrists only"] },
+    { q: "What's the main reason all helmets sold for street use in Washington should at minimum be DOT-compliant?", correct: "DOT compliance is legally required and indicates the helmet meets minimum federal safety standards", distractors: ["DOT helmets are the most comfortable", "DOT helmets are the cheapest available", "DOT compliance is recommended but not legally required"] }
+  ];
+
+  // ---------- Inline SVG icons ----------
+  const ICONS = {
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+    refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'
+  };
+
+  // ---------- Persistence ----------
+  const STORAGE_KEY = 'wa-moto-flashcards-v1';
+  const SCHEMA_VERSION = 1;
+
+  function saveState() {
+    try {
+      const payload = {
+        v: SCHEMA_VERSION,
+        n: CARDS.length,
+        p: phase,
+        cards: {}
+      };
+      deck.forEach(c => {
+        payload.cards[c.id] = { s: c.streak, f: c.finalReviewed };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      // localStorage may be unavailable (private mode, quota, etc.)
+      const status = document.getElementById('storage-status');
+      if (status) status.textContent = 'Progress not saving (storage unavailable)';
+    }
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed.v !== SCHEMA_VERSION || parsed.n !== CARDS.length) return null;
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearState() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }
+
+  // ---------- State ----------
+  let deck;
+  let phase;
+  let current = null;
+  let currentOptions = null;
+  let currentCorrectIndex = -1;
+  let answeredIndex = null;
+
+  function initDeck() {
+    const saved = loadState();
+    deck = CARDS.map((c, i) => ({
+      id: i,
+      q: c.q,
+      correct: c.correct,
+      distractors: c.distractors,
+      streak: 0,
+      finalReviewed: false
+    }));
+    phase = 'learning';
+
+    if (saved) {
+      phase = saved.p || 'learning';
+      deck.forEach(c => {
+        const s = saved.cards[c.id];
+        if (s) {
+          c.streak = s.s || 0;
+          c.finalReviewed = !!s.f;
+        }
+      });
+    }
+  }
+
+  function activeLearningCards() {
+    return deck.filter(c => c.streak < 2);
+  }
+  function pendingFinalReview() {
+    return deck.filter(c => !c.finalReviewed);
+  }
+
+  function shuffleAndSetOptions(card) {
+    const opts = [card.correct, card.distractors[0], card.distractors[1], card.distractors[2]];
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = opts[i]; opts[i] = opts[j]; opts[j] = t;
+    }
+    currentOptions = opts;
+    currentCorrectIndex = opts.indexOf(card.correct);
+  }
+
+  function pickNext() {
+    answeredIndex = null;
+    if (phase === 'done') return;
+    if (phase === 'learning') {
+      const pool = activeLearningCards();
+      if (pool.length === 0) {
+        phase = 'final-review';
+        return pickNext();
+      }
+      let candidates = pool;
+      if (current && pool.length > 1) {
+        const filtered = pool.filter(c => c.id !== current.id);
+        if (filtered.length > 0) candidates = filtered;
+      }
+      current = candidates[Math.floor(Math.random() * candidates.length)];
+      shuffleAndSetOptions(current);
+    } else if (phase === 'final-review') {
+      const pool = pendingFinalReview();
+      if (pool.length === 0) {
+        phase = 'done';
+        current = null;
+        return;
+      }
+      let candidates = pool;
+      if (current && pool.length > 1) {
+        const filtered = pool.filter(c => c.id !== current.id);
+        if (filtered.length > 0) candidates = filtered;
+      }
+      current = candidates[Math.floor(Math.random() * candidates.length)];
+      shuffleAndSetOptions(current);
+    }
+  }
+
+  function handleSelect(idx) {
+    if (answeredIndex !== null) return;
+    answeredIndex = idx;
+    const correct = (idx === currentCorrectIndex);
+    if (phase === 'learning') {
+      if (correct) current.streak += 1;
+      else current.streak = 0;
+    } else if (phase === 'final-review') {
+      current.finalReviewed = true;
+      if (!correct) {
+        current.streak = 0;
+        current.finalReviewed = false;
+        phase = 'learning';
+      }
+    }
+    saveState();
+    render();
+  }
+
+  function handleNext() {
+    pickNext();
+    saveState();
+    render();
+  }
+
+  function handleRestart() {
+    if (!confirm('Reset all progress? You\'ll start over from the beginning.')) return;
+    clearState();
+    initDeck();
+    current = null;
+    pickNext();
+    render();
+  }
+
+  // ---------- Rendering ----------
+  function el(tag, attrs, children) {
+    const e = document.createElement(tag);
+    if (attrs) {
+      for (const k in attrs) {
+        if (k === 'class') e.className = attrs[k];
+        else if (k === 'onclick') e.onclick = attrs[k];
+        else if (k === 'html') e.innerHTML = attrs[k];
+        else if (k === 'disabled') { if (attrs[k]) e.setAttribute('disabled', 'disabled'); }
+        else e.setAttribute(k, attrs[k]);
+      }
+    }
+    if (children != null) {
+      (Array.isArray(children) ? children : [children]).forEach(c => {
+        if (c == null) return;
+        if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+        else e.appendChild(c);
+      });
+    }
+    return e;
+  }
+
+  function progressBar() {
+    const total = deck.length;
+    const mastered = deck.filter(c => c.streak >= 2).length;
+    const oneStreak = deck.filter(c => c.streak === 1).length;
+    const finalDone = deck.filter(c => c.finalReviewed).length;
+
+    const wrap = el('div', { class: 'progress-wrap' });
+    const phaseLabel = phase === 'learning' ? 'Learning phase'
+      : phase === 'final-review' ? 'Final review pass'
+      : 'Complete';
+    const phaseColor = phase === 'final-review' ? 'var(--text-info)' : 'var(--text-secondary)';
+
+    const header = el('div', { class: 'progress-header' });
+    header.appendChild(el('span', { class: 'progress-phase', style: 'color: ' + phaseColor }, phaseLabel));
+    header.appendChild(el('span', { class: 'progress-count' },
+      phase === 'learning' ? mastered + ' of ' + total + ' mastered'
+      : phase === 'final-review' ? finalDone + ' of ' + total + ' reviewed'
+      : total + ' of ' + total + ' complete'));
+    wrap.appendChild(header);
+
+    const bar = el('div', { class: 'progress-bar' });
+    if (phase === 'learning' || phase === 'done') {
+      bar.appendChild(el('div', { style: 'width: ' + ((mastered / total) * 100) + '%; background: var(--text-success);' }));
+      bar.appendChild(el('div', { style: 'width: ' + ((oneStreak / total) * 100) + '%; background: var(--text-warning); opacity: 0.6;' }));
+    } else {
+      bar.appendChild(el('div', { style: 'width: ' + ((finalDone / total) * 100) + '%; background: var(--text-info);' }));
+    }
+    wrap.appendChild(bar);
+
+    if (phase === 'learning' && oneStreak > 0) {
+      wrap.appendChild(el('div', { class: 'progress-note' },
+        oneStreak + ' card' + (oneStreak === 1 ? '' : 's') + ' on a 1-correct streak (need 1 more in a row)'));
+    }
+    return wrap;
+  }
+
+  function optionButton(text, idx) {
+    const letter = String.fromCharCode(65 + idx);
+    const answered = answeredIndex !== null;
+    const isPicked = answeredIndex === idx;
+    const isCorrect = idx === currentCorrectIndex;
+    let cls = 'option';
+    let badgeHtml = letter;
+    if (answered) {
+      if (isCorrect) { cls += ' correct'; badgeHtml = ICONS.check; }
+      else if (isPicked) { cls += ' wrong'; badgeHtml = ICONS.x; }
+      else { cls += ' dim'; }
+    }
+    const btn = el('button', { class: cls, onclick: () => handleSelect(idx), disabled: answered, type: 'button' });
+    btn.appendChild(el('span', { class: 'option-badge', html: badgeHtml }));
+    btn.appendChild(el('span', { class: 'option-text' }, text));
+    return btn;
+  }
+
+  function cardView() {
+    const wrap = el('div', { class: 'card' });
+    const status = el('div', { class: 'card-status' });
+    if (phase === 'learning') {
+      status.appendChild(el('span', { class: 'streak-label' }, 'Streak:'));
+      for (let i = 0; i < 2; i++) {
+        const filled = i < current.streak;
+        status.appendChild(el('div', {
+          class: 'streak-dot',
+          style: 'background: ' + (filled ? 'var(--text-success)' : 'var(--border-tertiary)') + ';'
+        }));
+      }
+    } else if (phase === 'final-review') {
+      status.appendChild(el('span', { class: 'pill' }, 'Final pass'));
+    }
+    wrap.appendChild(status);
+    wrap.appendChild(el('div', { class: 'question' }, current.q));
+    const optsWrap = el('div', { class: 'options' });
+    for (let i = 0; i < currentOptions.length; i++) {
+      optsWrap.appendChild(optionButton(currentOptions[i], i));
+    }
+    wrap.appendChild(optsWrap);
+
+    if (answeredIndex !== null) {
+      const wasCorrect = answeredIndex === currentCorrectIndex;
+      const row = el('div', { class: 'result-row' });
+      const msg = el('div', { class: 'result-msg ' + (wasCorrect ? 'success' : 'warning') });
+      msg.appendChild(el('span', { html: wasCorrect ? ICONS.check : ICONS.refresh, style: 'display: inline-flex' }));
+      msg.appendChild(document.createTextNode(
+        wasCorrect
+          ? (phase === 'learning' && current.streak >= 2 ? 'Mastered' : 'Correct')
+          : (phase === 'learning' ? 'Streak reset' : 'Back to learning pool')
+      ));
+      row.appendChild(msg);
+      const next = el('button', { class: 'btn primary', onclick: handleNext, type: 'button' });
+      next.appendChild(document.createTextNode('Next card'));
+      next.appendChild(el('span', { html: ICONS.arrow, style: 'display: inline-flex' }));
+      row.appendChild(next);
+      wrap.appendChild(row);
+    }
+    return wrap;
+  }
+
+  function doneView() {
+    const wrap = el('div', { class: 'done' });
+    wrap.appendChild(el('div', { class: 'done-icon', html: ICONS.check }));
+    wrap.appendChild(el('div', { class: 'done-title' }, 'All cards complete'));
+    wrap.appendChild(el('div', { class: 'done-text' },
+      'You answered every card correctly twice in a row, then passed the final review with no misses. You should be in solid shape for the test.'));
+    const btn = el('button', { class: 'btn', onclick: handleRestart, type: 'button' });
+    btn.appendChild(el('span', { html: ICONS.refresh, style: 'display: inline-flex' }));
+    btn.appendChild(document.createTextNode('Start over'));
+    wrap.appendChild(btn);
+    return wrap;
+  }
+
+  function render() {
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+    app.appendChild(progressBar());
+    if (phase === 'done') app.appendChild(doneView());
+    else app.appendChild(cardView());
+  }
+
+  // ---------- Init ----------
+  initDeck();
+  pickNext();
+  render();
+  document.getElementById('reset-btn').addEventListener('click', handleRestart);
+})();
+</script>
+</body>
+</html>
